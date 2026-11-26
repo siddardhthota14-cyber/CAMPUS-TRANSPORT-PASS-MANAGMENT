@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CampusGo | Campus Transport Management</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:Arial,sans-serif}
+body{background:#f4f7fc;color:#1e293b}
+button{cursor:pointer;border:0;border-radius:8px;padding:11px 17px;font-weight:600}
+.primary{background:#2563eb;color:white}.secondary{background:#e8eef8;color:#1e40af}
+.danger{background:#fee2e2;color:#b91c1c}
+input,select{width:100%;padding:12px;border:1px solid #dbe3ef;border-radius:8px;background:white;font-size:14px}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:8px}
+.group{margin-bottom:18px}
+#loginPage{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#eaf2ff,#f8fbff)}
+.login-card{background:white;width:100%;max-width:420px;padding:38px;border-radius:18px;box-shadow:0 12px 40px #1e40af18}
+.login-card h1,.logo{color:#2563eb;font-size:29px;font-weight:800}
+.login-card h2{margin:22px 0 8px}.muted,.subtitle{color:#64748b;line-height:1.5}
+.login-card p{margin-bottom:24px}.login-card button{width:100%}
+#mainWebsite{display:none;min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:230px;background:white;border-right:1px solid #e5eaf2;padding:25px 17px;display:flex;flex-direction:column;z-index:2}
+.logo{padding:0 10px 35px}.nav-heading{font-size:11px;color:#94a3b8;font-weight:bold;padding:0 10px 12px;letter-spacing:1px}
+.nav-links{display:grid;gap:8px}.nav-links button{text-align:left;background:transparent;color:#64748b}
+.nav-links button.active,.nav-links button:hover{background:#eff6ff;color:#2563eb}
+.sidebar-bottom{margin-top:auto}.sidebar-bottom button{width:100%;text-align:left}
+.main-area{margin-left:230px;min-height:100vh}
+.topbar{height:72px;background:white;border-bottom:1px solid #e5eaf2;display:flex;align-items:center;justify-content:space-between;padding:0 30px}
+.content{max-width:1200px;margin:auto;padding:30px}
+.page{display:none}.page.active{display:block}
+.page-title{font-size:25px;margin-bottom:8px}.subtitle{margin-bottom:25px}
+.banner{background:linear-gradient(110deg,#1d4ed8,#3b82f6);color:white;padding:28px;border-radius:15px;margin-bottom:22px}
+.banner p{line-height:1.6;margin-top:8px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.stat,.section-card,.route-card,.application-card{background:white;border:1px solid #e5eaf2;border-radius:13px;padding:22px}
+.stat p{color:#64748b;font-size:13px;margin-bottom:10px}.stat h2{color:#1d4ed8}
+.section-card p{color:#64748b;line-height:1.6;margin-top:8px}
+.routes{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.route-card h3{margin-bottom:12px}.route-path{color:#2563eb;font-weight:600}
+.status{display:inline-block;margin-top:13px;padding:6px 10px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:12px;font-weight:bold}
+.application-card{max-width:760px}.photo-preview{display:none;width:105px;height:105px;object-fit:cover;border:1px dashed #94a3b8;border-radius:9px;margin-top:10px}
+.price-options{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 20px}
+.price-option{border:1px solid #dbe3ef;border-radius:10px;padding:14px;background:#f8fafc}
+.price-option strong{display:block;color:#1d4ed8;font-size:19px;margin:7px 0}
+.price-option small{color:#64748b;line-height:1.4}
+.message{display:none;padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px}
+.message.success{display:block;background:#dcfce7;color:#166534}
+.message.error{display:block;background:#fee2e2;color:#991b1b}
+#passSection{display:none;margin-top:28px}
+#passCard{background:white;border:2px solid #2563eb;border-radius:14px;padding:24px;max-width:680px;margin-top:15px}
+.pass-header{text-align:center;border-bottom:1px solid #dbe3ef;padding-bottom:16px;margin-bottom:18px}
+.pass-header h2{color:#1d4ed8;margin-bottom:5px}.pass-header p,.pass-footer{color:#64748b;font-size:12px}
+.pass-body{display:flex;gap:22px;align-items:flex-start}.pass-details{flex:1}
+.pass-details p{font-size:14px;line-height:1.5;margin-bottom:11px}
+.pass-photo{width:112px;height:130px;object-fit:cover;border:1px solid #cbd5e1;border-radius:8px}
+.pass-footer{text-align:center;border-top:1px solid #dbe3ef;padding-top:14px;margin-top:14px}
+.pass-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
+@media(max-width:800px){.sidebar{width:185px}.main-area{margin-left:185px}.content{padding:22px 17px}.stats{grid-template-columns:1fr}}
+@media(max-width:600px){.sidebar{position:relative;width:100%;height:auto;padding:14px}.logo{padding:4px 8px 14px}.nav-heading,.sidebar-bottom{display:none}.nav-links{grid-template-columns:repeat(3,1fr)}.nav-links button{font-size:12px;padding:10px 6px}.main-area{margin:0}.topbar{height:60px;padding:0 15px}.content{padding:18px 13px}.routes,.price-options{grid-template-columns:1fr}.pass-body{flex-direction:column-reverse}.pass-photo{width:95px;height:110px}}
+@media print{body *{visibility:hidden}#passCard,#passCard *{visibility:visible}#passCard{position:absolute;left:0;top:0;width:100%;max-width:none}.pass-actions{display:none!important}}
+</style>
+</head>
+<body>
+<section id="loginPage">
+ <div class="login-card">
+  <h1>CampusGo.</h1><h2>Welcome Back</h2>
+  <p class="muted">Sign in to access your campus transportation services.</p>
+  <form id="loginForm">
+   <div class="group"><label for="loginId">Student ID</label><input id="loginId" placeholder="Enter your student ID" required></div>
+   <div class="group"><label for="loginPassword">Password</label><input id="loginPassword" type="password" placeholder="Enter your password" required></div>
+   <button class="primary">Login to CampusGo</button>
+  </form>
+  <p class="muted" style="font-size:12px;margin:14px 0 0">Demo login: enter any non-empty ID and password.</p>
+ </div>
+</section>
+<div id="mainWebsite">
+ <aside class="sidebar">
+  <div class="logo">CampusGo.</div><div class="nav-heading">MAIN MENU</div>
+  <nav class="nav-links">
+   <button class="active" onclick="showPage('dashboardPage',this)">Dashboard</button>
+   <button onclick="showPage('routesPage',this)">Available Routes</button>
+   <button onclick="showPage('applyPage',this)">Apply for Bus Pass</button>
+  </nav>
+  <div class="sidebar-bottom"><button class="danger" onclick="logout()">Logout</button></div>
+ </aside>
+ <main class="main-area">
+  <header class="topbar"><h3>Campus Transport Management</h3><span class="muted">Student Portal</span></header>
+  <div class="content">
+   <section id="dashboardPage" class="page active">
+    <h1 class="page-title">Dashboard</h1><p class="subtitle">Manage your campus transportation services in one place.</p>
+    <div class="banner"><h2>Welcome to CampusGo</h2><p>Your campus travel, made simple. Explore routes, choose a fare plan and generate your bus pass online.</p></div>
+    <div class="stats">
+     <div class="stat"><p>Available Routes</p><h2>06</h2></div>
+     <div class="stat"><p>Campus Locations</p><h2>03</h2></div>
+     <div class="stat"><p>Transport Service</p><h2>Active</h2></div>
+    </div>
+    <div class="section-card"><h3>Getting Started</h3><p>View Available Routes, then apply for a pass. Weekly and monthly passes allow unlimited travel on all listed routes during their validity period. No extra fare is charged for each trip.</p></div>
+   </section>
+   <section id="routesPage" class="page">
+    <h1 class="page-title">Available Routes</h1><p class="subtitle">Explore the available campus transportation connections.</p>
+    <div class="routes" id="routesContainer"></div>
+   </section>
+   <section id="applyPage" class="page">
+    <h1 class="page-title">Apply for Bus Pass</h1><p class="subtitle">Enter your details and select the fare plan that suits you.</p>
+    <div class="application-card">
+     <div id="formMessage" class="message"></div>
+     <div class="section-card" style="margin-bottom:20px">
+      <h3>CampusGo Pricing</h3>
+      <div class="price-options">
+       <div class="price-option"><b>Single Journey</b><strong>₹20</strong><small>One one-way trip only.</small></div>
+       <div class="price-option"><b>Weekly Pass</b><strong>₹400</strong><small>7 days of unlimited trips on all listed routes.</small></div>
+       <div class="price-option"><b>Monthly Pass</b><strong>₹1,200</strong><small>30 days of unlimited trips on all listed routes.</small></div>
+      </div>
+      <p class="muted" style="font-size:12px">Weekly and monthly prices are sample project fares. Unlimited means all 6 listed routes are included, with no extra payment per trip during the pass validity.</p>
+     </div>
+     <form id="busPassForm">
+      <div class="group"><label for="studentName">Student Name</label><input id="studentName" placeholder="Enter your full name" required></div>
+      <div class="group"><label for="studentId">Student ID</label><input id="studentId" placeholder="Enter your student ID" required></div>
+      <div id="routeFields">
+       <div class="group"><label for="pickup">Pickup Location</label><select id="pickup"><option value="">Select pickup location</option><option>Main Gate</option><option>Academic Block</option><option>Hostels</option></select></div>
+       <div class="group"><label for="destination">Destination</label><select id="destination"><option value="">Select destination</option><option>Main Gate</option><option>Academic Block</option><option>Hostels</option></select></div>
+      </div>
+      <p id="unlimitedNote" class="muted" style="display:none;font-size:13px;margin-bottom:16px">Your weekly or monthly pass covers all 6 available routes. You can travel between Main Gate, Academic Block and Hostels without paying extra for each trip.</p>
+      <div class="group"><label for="passType">Choose Pass Type</label><select id="passType" required><option value="">Select a pricing plan</option><option value="single">Single Journey - ₹20</option><option value="weekly">Weekly Unlimited - ₹400</option><option value="monthly">Monthly Unlimited - ₹1,200</option></select></div>
+      <div class="group"><label for="studentPhoto">Upload Student Photo</label><input type="file" id="studentPhoto" accept="image/*" required><img id="photoPreview" class="photo-preview" alt="Student photo preview"></div>
+      <button class="primary">Generate Bus Pass</button>
+     </form>
+    </div>
+    <div id="passSection">
+     <h2>Your Bus Pass</h2><p class="subtitle">Your pass has been generated successfully.</p>
+     <div id="passCard">
+      <div class="pass-header"><h2>CampusGo</h2><p>Campus Transport Pass</p></div>
+      <div class="pass-body"><div class="pass-details">
+       <p><strong>Pass Number:</strong> <span id="passNumber"></span></p>
+       <p><strong>Student Name:</strong> <span id="passName"></span></p>
+       <p><strong>Student ID:</strong> <span id="passStudentId"></span></p>
+       <p><strong>Route:</strong> <span id="passRoute"></span></p>
+       <p><strong>Pass Type:</strong> <span id="passPlan"></span></p>
+       <p><strong>Amount Paid:</strong> <span id="passPrice"></span></p>
+       <p><strong>Valid From:</strong> <span id="passStart"></span></p>
+       <p><strong>Valid Until:</strong> <span id="passEnd"></span></p>
+       <p><strong>Travel Allowance:</strong> <span id="passAllowance"></span></p>
+      </div><img id="passPhoto" class="pass-photo" alt="Student photograph"></div>
+      <div class="pass-footer">CampusGo Campus Transport Management System</div>
+     </div>
+     <div class="pass-actions">
+      <button class="primary" onclick="downloadPass()">Print / Save as PDF</button>
+      <button class="secondary" onclick="printPass()">Print Pass</button>
+      <button class="secondary" onclick="newApplication()">Apply Again</button>
+     </div>
+    </div>
+   </section>
+  </div>
+ </main>
+</div>
+<script>
+const availableRoutes=[
+ {from:"Main Gate",to:"Academic Block"},{from:"Academic Block",to:"Main Gate"},
+ {from:"Main Gate",to:"Hostels"},{from:"Hostels",to:"Main Gate"},
+ {from:"Academic Block",to:"Hostels"},{from:"Hostels",to:"Academic Block"}
+];
+const plans={
+ single:{name:"Single Journey",price:20,days:0,allowance:"One one-way journey only"},
+ weekly:{name:"Weekly Unlimited",price:400,days:7,allowance:"Unlimited trips on all listed routes"},
+ monthly:{name:"Monthly Unlimited",price:1200,days:30,allowance:"Unlimited trips on all listed routes"}
+};
+let uploadedPhoto="";
+const $=id=>document.getElementById(id);
+function displayRoutes(){
+ $("routesContainer").innerHTML=availableRoutes.map((route,i)=>`
+  <article class="route-card"><h3>Route ${i+1}</h3><p class="route-path">${route.from} → ${route.to}</p><span class="status">Available</span></article>
+ `).join("");
+}
+displayRoutes();
+$("loginForm").addEventListener("submit",event=>{
+ event.preventDefault();
+ if(!$("loginId").value.trim()||!$("loginPassword").value.trim())return alert("Please enter your Student ID and password.");
+ $("loginPage").style.display="none";$("mainWebsite").style.display="block";
+});
+function showPage(pageId,button){
+ document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+ $(pageId).classList.add("active");
+ document.querySelectorAll(".nav-links button").forEach(item=>item.classList.remove("active"));
+ if(button)button.classList.add("active");
+}
+function logout(){
+ $("mainWebsite").style.display="none";$("loginPage").style.display="flex";
+ $("loginForm").reset();newApplication();uploadedPhoto="";
+}
+function updateRouteFields(){
+ const unlimited=$("passType").value==="weekly"||$("passType").value==="monthly";
+ $("routeFields").style.display=unlimited?"none":"block";
+ $("unlimitedNote").style.display=unlimited?"block":"none";
+ $("pickup").required=!unlimited;
+ $("destination").required=!unlimited;
+}
+$("passType").addEventListener("change",updateRouteFields);
+updateRouteFields();
+
+$("studentPhoto").addEventListener("change",event=>{
+ const file=event.target.files[0],preview=$("photoPreview");uploadedPhoto="";
+ if(!file){preview.style.display="none";return;}
+ if(!file.type.startsWith("image/")){showMessage("Please upload a valid image file.","error");event.target.value="";preview.style.display="none";return;}
+ if(file.size>5*1024*1024){showMessage("Image size must be less than 5 MB.","error");event.target.value="";preview.style.display="none";return;}
+ const reader=new FileReader();
+ reader.onload=e=>{uploadedPhoto=e.target.result;preview.src=uploadedPhoto;preview.style.display="block";};
+ reader.readAsDataURL(file);
+});
+function checkRoute(from,to){return availableRoutes.some(route=>route.from===from&&route.to===to);}
+function generatePassNumber(){return "CG"+Date.now().toString().slice(-6)+Math.floor(1000+Math.random()*9000);}
+function showMessage(message,type){$("formMessage").textContent=message;$("formMessage").className="message "+type;}
+function formatDate(date){return date.toLocaleDateString("en-IN");}
+$("busPassForm").addEventListener("submit",event=>{
+ event.preventDefault();
+ const name=$("studentName").value.trim(),studentId=$("studentId").value.trim();
+ const pickup=$("pickup").value,destination=$("destination").value,selectedPlan=$("passType").value;
+ if(!name||!studentId||!selectedPlan){showMessage("Please fill in all required fields.","error");return;}
+ if(selectedPlan==="single"){
+  if(!pickup||!destination){showMessage("Please select a pickup location and destination.","error");return;}
+  if(pickup===destination){showMessage("Pickup and destination cannot be the same.","error");return;}
+  if(!checkRoute(pickup,destination)){showMessage("The selected route is not available.","error");return;}
+ }
+ if(!uploadedPhoto){showMessage("Please upload your student photo.","error");return;}
+ const plan=plans[selectedPlan],start=new Date(),end=new Date(start);
+ if(plan.days)end.setDate(end.getDate()+plan.days);
+ $("passNumber").textContent=generatePassNumber();
+ $("passName").textContent=name;$("passStudentId").textContent=studentId;
+ $("passRoute").textContent=selectedPlan==="single"
+  ?pickup+" → "+destination
+  :"All 6 available routes (Main Gate, Academic Block and Hostels)";
+ $("passPlan").textContent=plan.name;$("passPrice").textContent="₹"+plan.price;
+ $("passStart").textContent=formatDate(start);
+ $("passEnd").textContent=plan.days?formatDate(end):"Valid for one journey";
+ $("passAllowance").textContent=plan.allowance;
+ $("passPhoto").src=uploadedPhoto;$("passSection").style.display="block";
+ showMessage("Your bus pass has been generated successfully.","success");
+ $("passSection").scrollIntoView({behavior:"smooth"});
+});
+function downloadPass(){
+ if(!$("passNumber").textContent)return alert("Please generate a bus pass first.");
+ // Choose "Save as PDF" in the browser print window to save a PDF copy.
+ window.print();
+}
+function printPass(){
+ if(!$("passNumber").textContent)return alert("Please generate a bus pass first.");
+ window.print();
+}
+function newApplication(){
+ $("busPassForm").reset();$("photoPreview").style.display="none";
+ $("passSection").style.display="none";$("formMessage").className="message";
+ uploadedPhoto="";updateRouteFields();
+}
+</script>
+</body>
+</html>
